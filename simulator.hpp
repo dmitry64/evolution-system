@@ -14,7 +14,7 @@ class Simulator {
     Simulator();
     void init();
     void cleanup();
-    void testActor(std::shared_ptr<Actor>& actor);
+    void testActor(const std::shared_ptr<Actor>& actor);
     chrono::ChSystemNSC* physicalSystem() const;
 };
 

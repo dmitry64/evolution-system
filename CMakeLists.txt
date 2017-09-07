@@ -9,11 +9,13 @@ find_package(Chrono
 set(SOURCES "main.cxx"
             "simulator.cxx"
             "simulationsystem.cxx"
+            "visualizer.cxx"
             "actor.cxx"
              )
 
 set(HEADERS "simulator.hpp"
             "simulationsystem.hpp"
+            "visualizer.hpp"
             "actor.hpp"
              )
 
