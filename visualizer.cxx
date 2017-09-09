@@ -27,19 +27,34 @@ Visualizer::Visualizer() {}
 
 void Visualizer::show() {
     Simulator sim;
+    sim.init();
     auto ptr = std::shared_ptr<Actor>(new Actor());
-    std::cout << "V3" << std::endl;
-    sim.testActor(ptr);
-    std::cout << "V4" << std::endl;
+
+    // sim.testActor(ptr);
+
     chrono::ChSystemNSC* chSystem = sim.physicalSystem();
+    assert(chSystem);
+    const auto bodies = ptr->getBodies();
+    for (auto body : *bodies) {
+        auto ball_texture = std::make_shared<chrono::ChTexture>(
+            GetChronoDataFile("pinkwhite.png"));
+        chSystem->Add(body);
+        body->AddAsset(ball_texture);
+    }
+
+    const auto links = ptr->getLinks();
+
+    for (auto linkPtr : (*links)) {
+        chSystem->AddLink(linkPtr);
+    }
 
     ChIrrApp application(chSystem, L"Simulation",
-                         core::dimension2d<u32>(800, 600), false);
+                         core::dimension2d<u32>(1024, 728), false);
 
     chrono::irrlicht::ChIrrWizard::add_typical_Sky(application.GetDevice());
     ChIrrWizard::add_typical_Lights(application.GetDevice());
     ChIrrWizard::add_typical_Camera(application.GetDevice(),
-                                    core::vector3df(12, 15, -20));
+                                    core::vector3df(-30, 30, -30));
 
     application.AssetBindAll();
     application.AssetUpdateAll();
@@ -47,7 +62,7 @@ void Visualizer::show() {
     chSystem->SetTimestepperType(ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
 
     application.SetStepManage(true);
-    application.SetTimestep(0.001);
+    application.SetTimestep(0.03);
     application.SetTryRealtime(true);
 
     double time = 0.0;
@@ -55,14 +70,34 @@ void Visualizer::show() {
         application.BeginScene(true, true, SColor(255, 140, 161, 192));
         application.DrawAll();
 
-        for (int i = 1; i < 10; ++i) {
-            ChIrrTools::drawCircle(application.GetVideoDriver(), 10.0 * i,
-                                   ChCoordsys<>(ChVector<>(0, 0.08, 0),
-                                                Q_from_AngX(3.14159265359 / 2)),
-                                   video::SColor(255, 0, 255, 0), 36, true);
+        for (int i = 1; i < 3; ++i) {
+            ChIrrTools::drawCircle(
+                application.GetVideoDriver(), 15.0 * i,
+                ChCoordsys<>(ChVector<>(0, 0, 0),
+                             Q_from_AngX(3.14159265359 / 2.0)),
+                video::SColor(0, 0, 255, 124), 50, true);
+            // ChIrrTools::drawPolyline()
         }
 
-        time += 0.001;
+        /*ChIrrTools::drawAllLinks(
+            *chSystem, application.GetVideoDriver(), 1.0,
+            chrono::irrlicht::ChIrrTools::eCh_LinkDrawMode::LINK_REACT_FORCE);*/
+
+        /*   ChIrrTools::drawAllBoundingBoxes(*chSystem,
+                                            application.GetVideoDriver());*/
+
+        ChIrrTools::drawAllLinkframes(*chSystem, application.GetVideoDriver(),
+                                      10.0);
+
+        const auto& lines = ptr->getLines();
+        for (const auto& line : lines) {
+            chrono::ChVector<> vect1 = line[0];
+            chrono::ChVector<> vect2 = line[1];
+            ChIrrTools::drawSegment(application.GetVideoDriver(), vect1, vect2,
+                                    SColor(255, 255, 255, 192), false);
+        }
+
+        time += 0.03;
         application.DoStep();
         ptr->simulateTime(time);
         application.EndScene();
