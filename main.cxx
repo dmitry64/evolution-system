@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 
     SimulationSystem system;
     system.init();
-    system.runSimulation();
+    // system.runSimulation();
 
     std::cout << "Starting visualizer" << std::endl;
 

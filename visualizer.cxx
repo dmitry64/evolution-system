@@ -54,7 +54,7 @@ void Visualizer::show() {
     chrono::irrlicht::ChIrrWizard::add_typical_Sky(application.GetDevice());
     ChIrrWizard::add_typical_Lights(application.GetDevice());
     ChIrrWizard::add_typical_Camera(application.GetDevice(),
-                                    core::vector3df(-30, 30, -30));
+                                    core::vector3df(-50, 80, -50));
 
     application.AssetBindAll();
     application.AssetUpdateAll();
@@ -62,7 +62,7 @@ void Visualizer::show() {
     chSystem->SetTimestepperType(ChTimestepper::Type::EULER_IMPLICIT_PROJECTED);
 
     application.SetStepManage(true);
-    application.SetTimestep(0.03);
+    application.SetTimestep(0.05);
     application.SetTryRealtime(true);
 
     double time = 0.0;
@@ -97,7 +97,7 @@ void Visualizer::show() {
                                     SColor(255, 255, 255, 192), false);
         }
 
-        time += 0.03;
+        time += 0.05;
         application.DoStep();
         ptr->simulateTime(time);
         application.EndScene();
